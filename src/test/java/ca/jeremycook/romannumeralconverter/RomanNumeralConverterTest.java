@@ -14,13 +14,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * TODO: Enter a paragraph that summarizes what the class does and why someone might want to utilize it
- * <p>
- * <p>Copyright © 2000-2016, NetSuite, Inc.</p>
- *
- * @author jcook
- * @version 2016.2
- * @since 2016-02-22
+ * Test cases for the implementation of the roman numeral converter.
  */
 @RunWith(Parameterized.class)
 public class RomanNumeralConverterTest {
@@ -70,7 +64,7 @@ public class RomanNumeralConverterTest {
     }
 
     @Test
-    public void testResultAgainstExpected() throws Exception {
+    public void testConvertingArabicToRoman() throws Exception {
         assertThat(converter.convertToRoman(number), is(expectedResult));
     }
 }
