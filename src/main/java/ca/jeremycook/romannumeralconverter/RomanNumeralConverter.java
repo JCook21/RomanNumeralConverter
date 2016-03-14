@@ -39,7 +39,7 @@ public class RomanNumeralConverter {
      * @param arabicNumber number to convert
      * @return number represented as roman numerals
      */
-    public String convertToRoman(int arabicNumber) {
+    public static String convertToRoman(int arabicNumber) {
         return IntStream.iterate(arabicNumber, remainder -> {
             Optional<Integer> boundariesKey = Optional.ofNullable(boundaries.floorKey(remainder));
 

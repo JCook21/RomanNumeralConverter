@@ -1,6 +1,5 @@
 package ca.jeremycook.romannumeralconverter;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -56,15 +55,8 @@ public class RomanNumeralConverterTest {
         });
     }
 
-    private RomanNumeralConverter converter;
-
-    @Before
-    public void setUp() throws Exception {
-        converter = new RomanNumeralConverter();
-    }
-
     @Test
     public void testConvertingArabicToRoman() throws Exception {
-        assertThat(converter.convertToRoman(number), is(expectedResult));
+        assertThat(RomanNumeralConverter.convertToRoman(number), is(expectedResult));
     }
 }
