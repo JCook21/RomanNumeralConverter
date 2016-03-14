@@ -1,5 +1,6 @@
 package ca.jeremycook.romannumeralconverter;
 
+import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
@@ -13,7 +14,7 @@ public class RomanNumeralConverter {
     /**
      * Map of boundary values used to convertToRoman between Roman and Arabic numbers.
      */
-    private static final TreeMap<Integer, String> boundaries = new TreeMap<>();
+    private static final NavigableMap<Integer, String> boundaries = new TreeMap<>();
     static {
         boundaries.put(1000, "M");
         boundaries.put(900, "CM");
