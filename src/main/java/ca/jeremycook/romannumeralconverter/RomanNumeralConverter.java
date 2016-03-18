@@ -1,7 +1,6 @@
 package ca.jeremycook.romannumeralconverter;
 
 import java.util.NavigableMap;
-import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.IntStream;
 
@@ -10,7 +9,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * Class to convertToRoman to and from Roman Numerals to Arabic numbers.
  */
-public class RomanNumeralConverter {
+class RomanNumeralConverter {
     /**
      * Map of boundary values used to convertToRoman between Roman and Arabic numbers.
      */
@@ -36,19 +35,24 @@ public class RomanNumeralConverter {
      * The algorithm works by using TreeMap::floorKey to find the key closest to the number.
      * The number is decremented by the key found each time.
      * The collection of keys is then used to look up the roman numeral for each value, returning these joined as a string.
+     *
      * @param arabicNumber number to convert
      * @return number represented as roman numerals
      */
-    public static String convertToRoman(int arabicNumber) {
+    static String convertToRoman(int arabicNumber) {
         return IntStream.iterate(arabicNumber, remainder -> {
-            Optional<Integer> boundariesKey = Optional.ofNullable(boundaries.floorKey(remainder));
+            Integer boundariesKey = boundaries.floorKey(remainder);
 
-            return (boundariesKey.isPresent()) ? (remainder - boundariesKey.get()) : 0;
+            return boundariesKey != null ? (remainder - boundariesKey) : 0;
         })
                 .limit(boundaries.size())
                 .filter(val -> val > 0)
                 .map(boundaries::floorKey)
                 .mapToObj(boundaries::get)
                 .collect(joining());
+    }
+
+    static int convertToArabic(String romanNumber) {
+        return 0;
     }
 }

@@ -1,5 +1,6 @@
 package ca.jeremycook.romannumeralconverter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -18,14 +19,16 @@ import static org.junit.Assert.assertThat;
 @RunWith(Parameterized.class)
 public class RomanNumeralConverterTest {
     @Parameter
-    public int number;
+    public int arabicNumber;
 
     @Parameter(value = 1)
-    public String expectedResult;
+    public String romanNumber;
 
     @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
+                {0, ""},
+                {-1, ""},
                 {1, "I"},
                 {2, "II"},
                 {3, "III"},
@@ -57,6 +60,12 @@ public class RomanNumeralConverterTest {
 
     @Test
     public void testConvertingArabicToRoman() throws Exception {
-        assertThat(RomanNumeralConverter.convertToRoman(number), is(expectedResult));
+        assertThat(RomanNumeralConverter.convertToRoman(arabicNumber), is(romanNumber));
+    }
+
+    @Test
+    @Ignore(value = "Not yet implemented")
+    public void testConvertingRomanToArabic() throws Exception {
+        assertThat(RomanNumeralConverter.convertToArabic(romanNumber), is(arabicNumber));
     }
 }
