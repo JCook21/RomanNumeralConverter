@@ -4,12 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 public class Main {
 
     private static final int MAX_ROMAN_NUMBER = 3999;
     private static final String EXIT_COMMAND = "exit";
+    private static final String ERROR_MESSAGE = "Enter a valid integer > 0 and <= %d, '%s' entered.";
 
     public static void main(String[] args) throws IOException {
         System.out.println("Welcome to the Arabic to Roman converter!");
@@ -24,20 +25,18 @@ public class Main {
                 System.out.println("Exiting.");
                 break;
             }
-            Optional<String> romanNumeral = Stream.generate(() -> input)
+            Optional<String> romanNumeral = IntStream.generate(() -> {
+                try {
+                    return Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    return 0;
+                }
+            })
                     .limit(1)
-                    .mapToInt(val -> {
-                        try {
-                            return Integer.parseInt(val);
-                        } catch (NumberFormatException e) {
-                            return 0;
-                        }
-                    })
-                    .filter(val -> val != 0)
-                    .filter(val -> val <= MAX_ROMAN_NUMBER)
+                    .filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
                     .mapToObj(RomanNumeralConverter::convertToRoman)
                     .findFirst();
-            System.out.println(romanNumeral.orElse(String.format("Enter a valid integer <= %d, '%s' entered.", MAX_ROMAN_NUMBER, input)));
+            System.out.println(romanNumeral.orElse(String.format(ERROR_MESSAGE, MAX_ROMAN_NUMBER, input)));
         }
     }
 }
