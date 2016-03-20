@@ -3,7 +3,6 @@ package ca.jeremycook.romannumeralconverter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class Main {
@@ -22,10 +21,9 @@ public class Main {
             System.out.print("> ");
             String input = br.readLine();
             if (input.toLowerCase().equals(EXIT_COMMAND)) {
-                System.out.println("Exiting.");
                 break;
             }
-            Optional<String> romanNumeral = IntStream.generate(() -> {
+            String result = IntStream.generate(() -> {
                 try {
                     return Integer.parseInt(input);
                 } catch (NumberFormatException e) {
@@ -35,8 +33,10 @@ public class Main {
                     .limit(1)
                     .filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
                     .mapToObj(RomanNumeralConverter::convertToRoman)
-                    .findFirst();
-            System.out.println(romanNumeral.orElse(String.format(ERROR_MESSAGE, MAX_ROMAN_NUMBER, input)));
+                    .findFirst()
+                    .orElse(String.format(ERROR_MESSAGE, MAX_ROMAN_NUMBER, input));
+            System.out.println(result);
         }
+        System.out.println("Exiting.");
     }
 }

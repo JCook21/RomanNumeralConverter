@@ -34,6 +34,7 @@ public class RomanNumeralConverter {
      * Converts an arabic number to roman numerals.
      * The algorithm works by using TreeMap::floorKey to find the key closest to the number.
      * The number is decremented by the key found each time.
+     * Once the stream is generated zero values are removed and floorKey is used again to find the map keys for each number.
      * The collection of keys is then used to look up the roman numeral for each value, returning these joined as a string.
      *
      * @param arabicNumber number to convert
