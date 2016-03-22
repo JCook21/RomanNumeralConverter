@@ -9,7 +9,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * Class to convertToRoman to and from Roman Numerals to Arabic numbers.
  */
-public class RomanNumeralConverter {
+class RomanNumeralConverter {
     /**
      * Map of boundary values used to convertToRoman between Roman and Arabic numbers.
      */
@@ -40,7 +40,7 @@ public class RomanNumeralConverter {
      * @param arabicNumber number to convert
      * @return number represented as roman numerals
      */
-    static public String convertToRoman(int arabicNumber) {
+    static String convertToRoman(int arabicNumber) {
         return IntStream.iterate(arabicNumber, remainder -> {
             Integer boundariesKey = boundaries.floorKey(remainder);
 
