@@ -2,7 +2,7 @@ package ca.jeremycook.romannumeralconverter;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
@@ -41,7 +41,7 @@ class RomanNumeralConverter {
      * @return number represented as roman numerals
      */
     static String convertToRoman(int arabicNumber) {
-        return IntStream.iterate(arabicNumber, remainder -> {
+        return Stream.iterate(arabicNumber, remainder -> {
             Integer boundariesKey = boundaries.floorKey(remainder);
 
             return boundariesKey != null ? (remainder - boundariesKey) : 0;
@@ -49,7 +49,7 @@ class RomanNumeralConverter {
                 .limit(boundaries.size())
                 .filter(val -> val > 0)
                 .map(boundaries::floorKey)
-                .mapToObj(boundaries::get)
+                .map(boundaries::get)
                 .collect(joining());
     }
 
