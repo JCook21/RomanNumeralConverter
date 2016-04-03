@@ -1,6 +1,5 @@
 package ca.jeremycook.romannumeralconverter;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -28,7 +27,6 @@ public class RomanNumeralConverterTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {0, ""},
-                {-1, ""},
                 {1, "I"},
                 {2, "II"},
                 {3, "III"},
@@ -54,7 +52,9 @@ public class RomanNumeralConverterTest {
                 {268, "CCLXVIII"},
                 {400, "CD"},
                 {999, "CMXCIX"},
-                {1000, "M"}
+                {1000, "M"},
+                {2578, "MMDLXXVIII"},
+                {2499, "MMCDXCIX"}
         });
     }
 
@@ -64,7 +64,6 @@ public class RomanNumeralConverterTest {
     }
 
     @Test
-    @Ignore(value = "Not yet implemented")
     public void testConvertingRomanToArabic() throws Exception {
         assertThat(RomanNumeralConverter.convertToArabic(romanNumber), is(arabicNumber));
     }

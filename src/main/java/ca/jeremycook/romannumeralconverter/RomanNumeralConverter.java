@@ -1,5 +1,8 @@
 package ca.jeremycook.romannumeralconverter;
 
+import ca.jeremycook.romannumeralconverter.collector.RomanToArabicSummingCollector;
+
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -9,11 +12,12 @@ import static java.util.stream.Collectors.joining;
 /**
  * Class to convertToRoman to and from Roman Numerals to Arabic numbers.
  */
-class RomanNumeralConverter {
+public class RomanNumeralConverter {
     /**
      * Map of boundary values used to convertToRoman between Roman and Arabic numbers.
      */
     private static final NavigableMap<Integer, String> boundaries = new TreeMap<>();
+
     static {
         boundaries.put(1000, "M");
         boundaries.put(900, "CM");
@@ -53,7 +57,24 @@ class RomanNumeralConverter {
                 .collect(joining());
     }
 
-    static int convertToArabic(String romanNumber) {
-        return 0;
+    /**
+     * Convert a Roman Numeral into an Arabic Number.
+     * Algorithm reverses the string and then maps each character to the number value using the boundaries map.
+     * It then uses the Roman to Arabic summing collector to reduce the stream into an integer.
+     * @param romanNumber roman numeral number to convert
+     * @return integer as the arabic representation of the number
+     */
+    static int convertToArabic(CharSequence romanNumber) {
+        return new StringBuilder(romanNumber)
+                .reverse()
+                .chars()
+                .mapToObj(c -> Character.toString((char) c))
+                .map((val) -> boundaries.entrySet()
+                        .stream()
+                        .filter(e -> e.getValue().equals(val))
+                        .map(Entry::getKey)
+                        .findFirst()
+                        .orElse(0))
+                .collect(new RomanToArabicSummingCollector());
     }
 }
