@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 
 public class Main {
 
-    public static final Predicate<String> ROMAN_NUMERAL_VALIDATOR = Pattern.compile("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$").asPredicate();
+    public static final Predicate<String> romanNumeralValidator = Pattern.compile("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$").asPredicate();
 
     private static final int MAX_ROMAN_NUMBER = 3999;
 
@@ -90,7 +90,7 @@ public class Main {
         return Stream.generate(() -> input)
                 .limit(1)
                 .map(String::toUpperCase)
-                .filter(ROMAN_NUMERAL_VALIDATOR)
+                .filter(romanNumeralValidator)
                 .mapToInt(RomanNumeralConverter::convertToArabic)
                 .mapToObj(Integer::toString)
                 .findFirst()

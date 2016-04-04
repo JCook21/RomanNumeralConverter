@@ -59,7 +59,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
     @Override
     public BinaryOperator<LinkedList<Integer>> combiner() {
         return (list1, list2) -> {
-            throw new RuntimeException("Parallel streams not supported with this collector");
+            throw new RuntimeException("Parallel streams not supported with this collector since they cannot guarantee the ordering of the elements.");
         };
     }
 
