@@ -40,9 +40,8 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
     public BiConsumer<LinkedList<Integer>, Integer> accumulator() {
         return (acc, value) -> {
             Integer valueToAdd = value;
-            if (acc.size() > 0) {
-                Integer previous = acc.getLast();
-                valueToAdd = previous <= value ? value : -value;
+            if (acc.size() > 0 && acc.getLast() > value) {
+                valueToAdd = -value;
             }
             acc.add(valueToAdd);
         };
@@ -77,7 +76,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
     @Override
     public Function<LinkedList<Integer>, Integer> finisher() {
         return (acc) -> acc.stream()
-                .mapToInt(i -> i)
+                .mapToInt(Integer::intValue)
                 .sum();
     }
 
