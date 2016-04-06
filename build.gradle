@@ -12,19 +12,14 @@ description = "Implementation of the roman numeral kata"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
-task runApp(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    standardInput = System.in
-    standardOutput = System.out
-    main = "ca.jeremycook.romannumeralconverter.Main"
-}
-
 repositories {
     maven { url "http://repo.maven.apache.org/maven2" }
 }
+
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
 jar {
     manifest {
         attributes 'Main-Class': 'ca.jeremycook.romannumeralconverter.Main'
