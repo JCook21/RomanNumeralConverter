@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+
 public class Main {
 
     public static final Predicate<String> romanNumeralValidator = Pattern.compile("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$").asPredicate();
@@ -16,11 +17,6 @@ public class Main {
     private static final int MAX_ROMAN_NUMBER = 3999;
 
     private static final String EXIT_COMMAND = "exit";
-
-    private static final String NUMBER_ERROR_MESSAGE = "Enter a valid integer > 0 and <= %d, '%s' entered.";
-    private static final String ROMAN_NUMERAL_ERROR = "Unable to convert '%s' into an Arabic number. Did you enter a valid roman numeral?";
-    private static final String COMMAND_ERROR = "Unable to parse input '%s' into 1 or 2.";
-    private static final String INVALID_COMMAND = "Invalid command '%d' entered.";
 
     private static final Collection<Integer> commands = new ArrayList<>();
 
@@ -43,57 +39,59 @@ public class Main {
                 break;
             }
             try {
-                Integer command = Integer.parseInt(input);
-                if (!commands.contains(command)) {
-                    System.out.println(String.format(INVALID_COMMAND, command));
-                    continue;
-                }
-                String result = convertValue(command, br);
+                String result = Stream.of(input)
+                        .mapToInt(Integer::parseInt)
+                        .filter(commands::contains)
+                        .mapToObj((val) -> convertValue(val, br))
+                        .findFirst()
+                        .orElse(String.format(ErrorMessages.INVALID_COMMAND.toString(), input));
                 System.out.println(result);
             } catch (NumberFormatException e) {
-                System.out.println(String.format(COMMAND_ERROR, input));
+                System.out.println(String.format(ErrorMessages.COMMAND_ERROR.toString(), input));
             }
         }
         System.out.println("Exiting.");
     }
 
-    private static String convertValue(Integer input, BufferedReader br) throws IOException {
+    private static String convertValue(Integer input, BufferedReader br) {
         if (input == 1) {
             return convertToRoman(br);
         }
-
         return convertToArabic(br);
     }
 
-    private static String convertToRoman(BufferedReader br) throws IOException {
+    private static String convertToRoman(BufferedReader br) {
         System.out.println("Enter an Arabic number below to see it converted to Roman numerals.");
         System.out.print("> ");
-        String input = br.readLine();
-        return Stream.generate(() -> {
-            try {
-                return Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                return 0;
-            }
-        })
-                .limit(1)
-                .filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
-                .map(RomanNumeralConverter::convertToRoman)
-                .findFirst()
-                .orElse(String.format(NUMBER_ERROR_MESSAGE, MAX_ROMAN_NUMBER, input));
+        try {
+            String input = br.readLine();
+            return Stream.of(input)
+                    .mapToInt(Integer::parseInt)
+                    .filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
+                    .mapToObj(RomanNumeralConverter::convertToRoman)
+                    .findFirst()
+                    .orElse(String.format(ErrorMessages.NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER, input));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to parse input", e);
+        } catch (NumberFormatException e) {
+            return ErrorMessages.NUMBER_PARSE_ERROR.toString();
+        }
     }
 
-    private static String convertToArabic(BufferedReader br) throws IOException {
+    private static String convertToArabic(BufferedReader br) {
         System.out.println("Enter a Roman Numeral below to see it converted to an Arabic number.");
         System.out.print("> ");
-        String input = br.readLine();
-        return Stream.generate(() -> input)
-                .limit(1)
-                .map(String::toUpperCase)
-                .filter(romanNumeralValidator)
-                .mapToInt(RomanNumeralConverter::convertToArabic)
-                .mapToObj(Integer::toString)
-                .findFirst()
-                .orElse(String.format(ROMAN_NUMERAL_ERROR, input));
+        try {
+            String input = br.readLine();
+            return Stream.of(input)
+                    .map(String::toUpperCase)
+                    .filter(romanNumeralValidator)
+                    .mapToInt(RomanNumeralConverter::convertToArabic)
+                    .mapToObj(Integer::toString)
+                    .findFirst()
+                    .orElse(String.format(ErrorMessages.ROMAN_NUMERAL_ERROR.toString(), input));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to parse input", e);
+        }
     }
 }
