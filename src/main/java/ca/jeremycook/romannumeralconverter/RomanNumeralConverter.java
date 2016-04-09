@@ -5,12 +5,13 @@ import ca.jeremycook.romannumeralconverter.collector.RomanToArabicSummingCollect
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 
 /**
- * Class to convertToRoman to and from Roman Numerals to Arabic numbers.
+ * Class to convert to and from Roman Numerals and Arabic numbers.
  */
 public class RomanNumeralConverter {
     /**
@@ -33,6 +34,16 @@ public class RomanNumeralConverter {
         boundaries.put(4, "IV");
         boundaries.put(1, "I");
     }
+
+    /**
+     * Function to map a roman numeral character to the arabic number contained in the boundaries map.
+     */
+    private static final Function<String, Integer> findArabicNumberFromRomanCharacter = (character) -> boundaries.entrySet()
+            .stream()
+            .filter(e -> e.getValue().equals(character))
+            .map(Entry::getKey)
+            .findFirst()
+            .orElse(0);
 
     /**
      * Converts an arabic number to roman numerals.
@@ -69,12 +80,7 @@ public class RomanNumeralConverter {
                 .reverse()
                 .chars()
                 .mapToObj(c -> Character.toString((char) c))
-                .map((character) -> boundaries.entrySet()
-                        .stream()
-                        .filter(e -> e.getValue().equals(character))
-                        .map(Entry::getKey)
-                        .findFirst()
-                        .orElse(0))
+                .map(findArabicNumberFromRomanCharacter)
                 .collect(new RomanToArabicSummingCollector());
     }
 }
