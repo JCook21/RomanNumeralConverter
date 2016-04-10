@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.joining;
  */
 public class RomanNumeralConverter {
     /**
-     * Map of boundary values used to convertToRoman between Roman and Arabic numbers.
+     * Map of boundary values used to convert between Roman and Arabic numbers.
      */
     private static final NavigableMap<Integer, String> boundaries = new TreeMap<>();
 
@@ -38,12 +38,12 @@ public class RomanNumeralConverter {
     /**
      * Function to map a roman numeral character to the arabic number contained in the boundaries map.
      */
-    private static final Function<String, Integer> findArabicNumberFromRomanCharacter = (character) -> boundaries.entrySet()
+    private static final Function<String, Integer> findArabicNumberFromRomanCharacter = character -> boundaries.entrySet()
             .stream()
             .filter(e -> e.getValue().equals(character))
             .map(Entry::getKey)
             .findFirst()
-            .orElse(0);
+            .orElseThrow(() -> new IllegalArgumentException(String.format("Unable to map roman numeral '%s' to an arabic character.", character)));
 
     /**
      * Converts an arabic number to roman numerals.
@@ -79,7 +79,7 @@ public class RomanNumeralConverter {
         return new StringBuilder(romanNumber)
                 .reverse()
                 .chars()
-                .mapToObj(c -> Character.toString((char) c))
+                .mapToObj(character -> Character.toString((char) character))
                 .map(findArabicNumberFromRomanCharacter)
                 .collect(new RomanToArabicSummingCollector());
     }

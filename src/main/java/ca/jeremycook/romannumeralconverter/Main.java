@@ -29,12 +29,12 @@ public class Main {
         System.out.println("Welcome to the Arabic to Roman converter!");
         System.out.println("Type 'exit' to exit.");
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
         while (true) {
             System.out.println("Enter 1 to convert a number to a Roman Numeral.");
             System.out.println("Enter 2 to convert a Roman Numeral to a number.");
             System.out.print("> ");
-            String input = br.readLine();
+            String input = bufferedReader.readLine();
             if (input.toLowerCase().equals(EXIT_COMMAND)) {
                 break;
             }
@@ -42,7 +42,7 @@ public class Main {
                 String result = Stream.of(input)
                         .mapToInt(Integer::parseInt)
                         .filter(commands::contains)
-                        .mapToObj((val) -> convertValue(val, br))
+                        .mapToObj(val -> convertValue(val, bufferedReader))
                         .findFirst()
                         .orElse(String.format(ErrorMessages.INVALID_COMMAND.toString(), input));
                 System.out.println(result);
@@ -50,48 +50,43 @@ public class Main {
                 System.out.println(String.format(ErrorMessages.COMMAND_ERROR.toString(), input));
             }
         }
+        bufferedReader.close();
         System.out.println("Exiting.");
     }
 
-    private static String convertValue(Integer input, BufferedReader br) {
+    private static String convertValue(Integer input, BufferedReader bufferedReader) {
         if (input == 1) {
-            return convertToRoman(br);
+            return convertToRoman(bufferedReader);
         }
-        return convertToArabic(br);
+        return convertToArabic(bufferedReader);
     }
 
-    private static String convertToRoman(BufferedReader br) {
+    private static String convertToRoman(BufferedReader bufferedReader) {
         System.out.println("Enter an Arabic number below to see it converted to Roman numerals.");
         System.out.print("> ");
         try {
-            String input = br.readLine();
-            return Stream.of(input)
+            return bufferedReader.lines()
+                    .limit(1)
                     .mapToInt(Integer::parseInt)
                     .filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
                     .mapToObj(RomanNumeralConverter::convertToRoman)
                     .findFirst()
-                    .orElse(String.format(ErrorMessages.NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER, input));
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to parse input", e);
+                    .orElse(String.format(ErrorMessages.NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER));
         } catch (NumberFormatException e) {
             return ErrorMessages.NUMBER_PARSE_ERROR.toString();
         }
     }
 
-    private static String convertToArabic(BufferedReader br) {
+    private static String convertToArabic(BufferedReader bufferedReader) {
         System.out.println("Enter a Roman Numeral below to see it converted to an Arabic number.");
         System.out.print("> ");
-        try {
-            String input = br.readLine();
-            return Stream.of(input)
-                    .map(String::toUpperCase)
-                    .filter(romanNumeralValidator)
-                    .mapToInt(RomanNumeralConverter::convertToArabic)
-                    .mapToObj(Integer::toString)
-                    .findFirst()
-                    .orElse(String.format(ErrorMessages.ROMAN_NUMERAL_ERROR.toString(), input));
-        } catch (IOException e) {
-            throw new RuntimeException("Unable to parse input", e);
-        }
+        return bufferedReader.lines()
+                .limit(1)
+                .map(String::toUpperCase)
+                .filter(romanNumeralValidator)
+                .mapToInt(RomanNumeralConverter::convertToArabic)
+                .mapToObj(Integer::toString)
+                .findFirst()
+                .orElse(ErrorMessages.ROMAN_NUMERAL_ERROR.toString());
     }
 }

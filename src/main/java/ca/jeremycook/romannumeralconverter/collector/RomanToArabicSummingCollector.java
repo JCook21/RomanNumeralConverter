@@ -1,6 +1,7 @@
 package ca.jeremycook.romannumeralconverter.collector;
 
 import java.util.Collections;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -14,7 +15,7 @@ import java.util.stream.Collector;
  * This takes a Stream of a reversed roman numeral, cast to its Arabic number representation.
  * This Stream is then cast to a single integer.
  */
-public class RomanToArabicSummingCollector implements Collector<Integer, LinkedList<Integer>, Integer> {
+public class RomanToArabicSummingCollector implements Collector<Integer, Deque<Integer>, Integer> {
 
     /**
      * A function that creates and returns a new mutable result container.
@@ -22,7 +23,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
      * @return a function which returns a new, mutable result container
      */
     @Override
-    public Supplier<LinkedList<Integer>> supplier() {
+    public Supplier<Deque<Integer>> supplier() {
         return LinkedList::new;
     }
 
@@ -37,7 +38,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
      * @return a function which folds a value into a mutable result container
      */
     @Override
-    public BiConsumer<LinkedList<Integer>, Integer> accumulator() {
+    public BiConsumer<Deque<Integer>, Integer> accumulator() {
         return (acc, value) -> {
             Integer valueToAdd = value;
             if (!acc.isEmpty() && acc.getLast() > value) {
@@ -56,7 +57,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
      * result
      */
     @Override
-    public BinaryOperator<LinkedList<Integer>> combiner() {
+    public BinaryOperator<Deque<Integer>> combiner() {
         return (list1, list2) -> {
             throw new RuntimeException("Parallel streams not supported with this collector since they cannot guarantee the ordering of the elements.");
         };
@@ -74,8 +75,8 @@ public class RomanToArabicSummingCollector implements Collector<Integer, LinkedL
      * result
      */
     @Override
-    public Function<LinkedList<Integer>, Integer> finisher() {
-        return (acc) -> acc.stream()
+    public Function<Deque<Integer>, Integer> finisher() {
+        return acc -> acc.stream()
                 .mapToInt(Integer::intValue)
                 .sum();
     }
