@@ -9,10 +9,12 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import static ca.jeremycook.romannumeralconverter.ErrorMessages.*;
+
 
 public class Main {
 
-    public static final Predicate<String> romanNumeralValidator = Pattern.compile("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$").asPredicate();
+    private static final Predicate<String> romanNumeralValidator = Pattern.compile("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$").asPredicate();
 
     private static final int MAX_ROMAN_NUMBER = 3999;
 
@@ -44,10 +46,10 @@ public class Main {
                         .filter(commands::contains)
                         .mapToObj(val -> convertValue(val, bufferedReader))
                         .findFirst()
-                        .orElse(String.format(ErrorMessages.INVALID_COMMAND.toString(), input));
+                        .orElse(String.format(INVALID_COMMAND.toString(), input));
                 System.out.println(result);
             } catch (NumberFormatException e) {
-                System.out.println(String.format(ErrorMessages.COMMAND_ERROR.toString(), input));
+                System.out.println(String.format(COMMAND_ERROR.toString(), input));
             }
         }
         bufferedReader.close();
@@ -71,9 +73,9 @@ public class Main {
                     .filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
                     .mapToObj(RomanNumeralConverter::convertToRoman)
                     .findFirst()
-                    .orElse(String.format(ErrorMessages.NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER));
+                    .orElse(String.format(NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER));
         } catch (NumberFormatException e) {
-            return ErrorMessages.NUMBER_PARSE_ERROR.toString();
+            return NUMBER_PARSE_ERROR.toString();
         }
     }
 
@@ -87,6 +89,6 @@ public class Main {
                 .mapToInt(RomanNumeralConverter::convertToArabic)
                 .mapToObj(Integer::toString)
                 .findFirst()
-                .orElse(ErrorMessages.ROMAN_NUMERAL_ERROR.toString());
+                .orElse(ROMAN_NUMERAL_ERROR.toString());
     }
 }

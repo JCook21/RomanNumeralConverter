@@ -44,7 +44,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, Deque<I
             if (!acc.isEmpty() && acc.getLast() > value) {
                 valueToAdd = -value;
             }
-            acc.add(valueToAdd);
+            acc.addLast(valueToAdd);
         };
     }
 

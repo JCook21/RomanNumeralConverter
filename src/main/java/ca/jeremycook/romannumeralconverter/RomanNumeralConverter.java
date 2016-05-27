@@ -13,7 +13,7 @@ import static java.util.stream.Collectors.joining;
 /**
  * Class to convert to and from Roman Numerals and Arabic numbers.
  */
-public class RomanNumeralConverter {
+class RomanNumeralConverter {
     /**
      * Map of boundary values used to convert between Roman and Arabic numbers.
      */
