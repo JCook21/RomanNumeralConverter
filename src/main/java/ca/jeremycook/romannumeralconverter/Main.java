@@ -53,9 +53,9 @@ public class Main
 			try
 			{
 				result = Stream.of(input)
-						.mapToInt(Integer::parseInt)
+						.map(Integer::new)
 						.filter(commands::contains)
-						.mapToObj(val -> convertValue(val, bufferedReader))
+						.map(val -> convertValue(val, bufferedReader))
 						.findFirst()
 						.orElse(String.format(INVALID_COMMAND.toString(), input));
 			}
@@ -86,9 +86,9 @@ public class Main
 		{
 			return bufferedReader.lines()
 					.limit(1)
-					.mapToInt(Integer::parseInt)
+					.map(Integer::new)
 					.filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
-					.mapToObj(RomanNumeralConverter::convertToRoman)
+					.map(RomanNumeralConverter::convertToRoman)
 					.findFirst()
 					.orElse(String.format(NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER));
 		}

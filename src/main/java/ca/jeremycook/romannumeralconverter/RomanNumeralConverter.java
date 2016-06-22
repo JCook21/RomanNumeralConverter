@@ -80,7 +80,7 @@ class RomanNumeralConverter
 	 *
 	 * @return integer as the arabic representation of the number
 	 */
-	static int convertToArabic(CharSequence romanNumber)
+	static Integer convertToArabic(CharSequence romanNumber)
 	{
 		return new StringBuilder(romanNumber)
 				.reverse()

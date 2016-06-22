@@ -84,8 +84,8 @@ public class RomanToArabicSummingCollector implements Collector<Integer, Deque<I
 	public Function<Deque<Integer>, Integer> finisher()
 	{
 		return acc -> acc.stream()
-				.mapToInt(Integer::intValue)
-				.sum();
+				.reduce(Integer::sum)
+				.orElse(0);
 	}
 
 	/**
