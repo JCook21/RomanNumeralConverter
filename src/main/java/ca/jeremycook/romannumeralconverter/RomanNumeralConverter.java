@@ -64,7 +64,7 @@ class RomanNumeralConverter
 
 			return boundariesKey != null ? (remainder - boundariesKey) : 0;
 		})
-				.limit(boundaries.size())
+				.limit((long) boundaries.size())
 				.filter(val -> val > 0)
 				.map(boundaries::floorKey)
 				.map(boundaries::get)
