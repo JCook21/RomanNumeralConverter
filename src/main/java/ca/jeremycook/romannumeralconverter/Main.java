@@ -49,24 +49,33 @@ public class Main
 			{
 				break;
 			}
-			String result = "";
-			try
-			{
-				result = Stream.of(input)
-						.map(Integer::new)
-						.filter(commands::contains)
-						.map(val -> convertValue(val, bufferedReader))
-						.findFirst()
-						.orElse(String.format(INVALID_COMMAND.toString(), input));
-			}
-			catch (NumberFormatException e)
-			{
-				result = String.format(COMMAND_ERROR.toString(), input);
-			}
-			System.out.println(result);
+			System.out.println(convertInputToResult(bufferedReader, input));
 		}
 		bufferedReader.close();
 		System.out.println("Exiting.");
+	}
+
+	/**
+	 * Method to take input, processing it into a result.
+	 * @param bufferedReader
+	 * @param input
+	 * @return String result
+	 */
+	private static String convertInputToResult(BufferedReader bufferedReader, String input)
+	{
+		try
+		{
+			return Stream.of(input)
+					.map(Integer::new)
+					.filter(commands::contains)
+					.map(val -> convertValue(val, bufferedReader))
+					.findFirst()
+					.orElse(String.format(INVALID_COMMAND.toString(), input));
+		}
+		catch (NumberFormatException e)
+		{
+			return String.format(COMMAND_ERROR.toString(), input);
+		}
 	}
 
 	private static String convertValue(Integer input, BufferedReader bufferedReader)
@@ -85,7 +94,7 @@ public class Main
 		try
 		{
 			return bufferedReader.lines()
-					.limit(1)
+					.limit(1L)
 					.map(Integer::new)
 					.filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
 					.map(RomanNumeralConverter::convertToRoman)
@@ -103,7 +112,7 @@ public class Main
 		System.out.println("Enter a Roman Numeral below to see it converted to an Arabic number.");
 		System.out.print("> ");
 		return bufferedReader.lines()
-				.limit(1)
+				.limit(1L)
 				.filter(romanNumeralValidator)
 				.map(String::toUpperCase)
 				.mapToInt(RomanNumeralConverter::convertToArabic)

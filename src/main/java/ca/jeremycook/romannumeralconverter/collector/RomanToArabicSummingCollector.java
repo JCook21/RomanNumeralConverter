@@ -3,6 +3,7 @@ package ca.jeremycook.romannumeralconverter.collector;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -44,7 +45,8 @@ public class RomanToArabicSummingCollector implements Collector<Integer, Deque<I
 	{
 		return (acc, value) -> {
 			Integer valueToAdd = value;
-			if (!acc.isEmpty() && acc.getLast() > value)
+			Optional<Integer> lastValue = Optional.ofNullable(acc.peekLast());
+			if (lastValue.orElse(-1) > value)
 			{
 				valueToAdd = -value;
 			}
@@ -83,9 +85,7 @@ public class RomanToArabicSummingCollector implements Collector<Integer, Deque<I
 	@Override
 	public Function<Deque<Integer>, Integer> finisher()
 	{
-		return acc -> acc.stream()
-				.reduce(Integer::sum)
-				.orElse(0);
+		return acc -> acc.stream().reduce(0, Integer::sum);
 	}
 
 	/**
