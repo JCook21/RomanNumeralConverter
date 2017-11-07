@@ -6,13 +6,11 @@ import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Class to convert to and from Roman Numerals and Arabic numbers.
  */
-class RomanNumeralConverter
+final class RomanNumeralConverter
 {
 	/**
 	 * Map of boundary values used to convert between Roman and Arabic numbers.
@@ -42,8 +40,8 @@ class RomanNumeralConverter
 	private static final Function<String, Integer> findArabicNumberFromRomanCharacter = character -> boundaries.entrySet()
 			.stream()
 			.filter(e -> e.getValue().equals(character))
-			.map(Entry::getKey)
 			.findFirst()
+			.map(Entry::getKey)
 			.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to map roman numeral '%s' to an arabic character.", character)));
 
 	/**
@@ -59,16 +57,11 @@ class RomanNumeralConverter
 	 */
 	static String convertToRoman(int arabicNumber)
 	{
-		return Stream.iterate(arabicNumber, remainder -> {
-			Integer boundariesKey = boundaries.floorKey(remainder);
+		Integer currentKey = boundaries.floorKey(arabicNumber);
+		String currentNumeral = boundaries.get(currentKey);
+		int remainder = arabicNumber - currentKey;
 
-			return boundariesKey != null ? (remainder - boundariesKey) : 0;
-		})
-				.limit((long) boundaries.size())
-				.filter(val -> val > 0)
-				.map(boundaries::floorKey)
-				.map(boundaries::get)
-				.collect(Collectors.joining());
+		return remainder > 0 ? currentNumeral + convertToRoman(remainder) : currentNumeral;
 	}
 
 	/**
