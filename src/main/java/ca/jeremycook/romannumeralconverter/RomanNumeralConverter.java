@@ -1,7 +1,6 @@
 package ca.jeremycook.romannumeralconverter;
 
-import ca.jeremycook.romannumeralconverter.collector.RomanToArabicSummingCollector;
-
+import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -15,10 +14,11 @@ final class RomanNumeralConverter
 	/**
 	 * Map of boundary values used to convert between Roman and Arabic numbers.
 	 */
-	private static final NavigableMap<Integer, String> boundaries = new TreeMap<>();
+	private static final NavigableMap<Integer, String> romanNumeralBoundaries;
 
 	static
 	{
+		NavigableMap<Integer, String> boundaries = new TreeMap<>();
 		boundaries.put(1000, "M");
 		boundaries.put(900, "CM");
 		boundaries.put(500, "D");
@@ -32,12 +32,13 @@ final class RomanNumeralConverter
 		boundaries.put(5, "V");
 		boundaries.put(4, "IV");
 		boundaries.put(1, "I");
+		romanNumeralBoundaries = Collections.unmodifiableNavigableMap(boundaries);
 	}
 
 	/**
-	 * Function to map a roman numeral character to the arabic number contained in the boundaries map.
+	 * Function to map a roman numeral character to the arabic number contained in the romanNumeralBoundaries map.
 	 */
-	private static final Function<String, Integer> findArabicNumberFromRomanCharacter = character -> boundaries.entrySet()
+	private static final Function<String, Integer> findArabicNumberFromRomanCharacter = character -> romanNumeralBoundaries.entrySet()
 			.stream()
 			.filter(e -> e.getValue().equals(character))
 			.findFirst()
@@ -46,10 +47,8 @@ final class RomanNumeralConverter
 
 	/**
 	 * Converts an arabic number to roman numerals.
-	 * The algorithm works by using TreeMap::floorKey to find the key closest to the number.
+	 * The algorithm works by using TreeMap::floorEntry to find the key closest to the number.
 	 * The number is decremented by the key found each time.
-	 * Once the stream is generated zero values are removed and floorKey is used again to find the map keys for each number.
-	 * The collection of keys is then used to look up the roman numeral for each value, returning these joined as a string.
 	 *
 	 * @param arabicNumber number to convert
 	 *
@@ -57,30 +56,34 @@ final class RomanNumeralConverter
 	 */
 	static String convertToRoman(int arabicNumber)
 	{
-		Integer currentKey = boundaries.floorKey(arabicNumber);
-		String currentNumeral = boundaries.get(currentKey);
-		int remainder = arabicNumber - currentKey;
+		Entry<Integer, String> entry = romanNumeralBoundaries.floorEntry(arabicNumber);
+		int remainder = arabicNumber - entry.getKey();
+		String currentRomanNumeral = entry.getValue();
 
-		return remainder > 0 ? currentNumeral + convertToRoman(remainder) : currentNumeral;
+		return remainder > 0 ? currentRomanNumeral + convertToRoman(remainder) : currentRomanNumeral;
 	}
 
 	/**
 	 * Convert a Roman Numeral into an Arabic Number.
-	 * Algorithm reverses the string and then maps each character to the number value using the boundaries map.
-	 * It then uses the Roman to Arabic summing collector to reduce the stream into an integer.
+	 * Algorithm finds the Arabic value of the first character and the second character if
 	 *
 	 * @param romanNumber roman numeral number to convert
 	 *
 	 * @return integer as the arabic representation of the number
 	 */
-	static Integer convertToArabic(CharSequence romanNumber)
+	static Integer convertToArabic(String romanNumber)
 	{
-		return new StringBuilder(romanNumber)
-				.reverse()
-				.chars()
-				.mapToObj(character -> (char) character)
-				.map(String::valueOf)
-				.map(findArabicNumberFromRomanCharacter)
-				.collect(new RomanToArabicSummingCollector());
+		if (romanNumber.length() == 1)
+		{
+			return findArabicNumberFromRomanCharacter.apply(romanNumber);
+		}
+		int firstCharValue = findArabicNumberFromRomanCharacter.apply(romanNumber.substring(0, 1));
+		int nextCharValue = findArabicNumberFromRomanCharacter.apply(romanNumber.substring(1, 2));
+		if (nextCharValue > firstCharValue)
+		{
+			firstCharValue = -firstCharValue;
+		}
+
+		return firstCharValue + convertToArabic(romanNumber.substring(1));
 	}
 }
