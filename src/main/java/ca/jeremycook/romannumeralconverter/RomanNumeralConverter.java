@@ -14,9 +14,14 @@ final class RomanNumeralConverter
 	/**
 	 * Map of boundary values used to convert between Roman and Arabic numbers.
 	 */
-	private static final NavigableMap<Integer, String> romanNumeralBoundaries;
+	private final NavigableMap<Integer, String> romanNumeralBoundaries;
 
-	static
+	/**
+	 * Function to map a roman numeral character to the arabic number contained in the romanNumeralBoundaries map.
+	 */
+	private final Function<String, Integer> findArabicNumberFromRomanCharacter;
+
+	RomanNumeralConverter()
 	{
 		NavigableMap<Integer, String> boundaries = new TreeMap<>();
 		boundaries.put(1000, "M");
@@ -33,17 +38,13 @@ final class RomanNumeralConverter
 		boundaries.put(4, "IV");
 		boundaries.put(1, "I");
 		romanNumeralBoundaries = Collections.unmodifiableNavigableMap(boundaries);
+		findArabicNumberFromRomanCharacter = character -> romanNumeralBoundaries.entrySet()
+				.stream()
+				.filter(e -> e.getValue().equals(character))
+				.findFirst()
+				.map(Entry::getKey)
+				.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to map roman numeral '%s' to an arabic character.", character)));
 	}
-
-	/**
-	 * Function to map a roman numeral character to the arabic number contained in the romanNumeralBoundaries map.
-	 */
-	private static final Function<String, Integer> findArabicNumberFromRomanCharacter = character -> romanNumeralBoundaries.entrySet()
-			.stream()
-			.filter(e -> e.getValue().equals(character))
-			.findFirst()
-			.map(Entry::getKey)
-			.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to map roman numeral '%s' to an arabic character.", character)));
 
 	/**
 	 * Converts an arabic number to roman numerals.
@@ -54,7 +55,7 @@ final class RomanNumeralConverter
 	 *
 	 * @return number represented as roman numerals
 	 */
-	static String convertToRoman(int arabicNumber)
+	String convertToRoman(int arabicNumber)
 	{
 		Entry<Integer, String> entry = romanNumeralBoundaries.floorEntry(arabicNumber);
 		int remainder = arabicNumber - entry.getKey();
@@ -71,7 +72,7 @@ final class RomanNumeralConverter
 	 *
 	 * @return integer as the arabic representation of the number
 	 */
-	static Integer convertToArabic(String romanNumber)
+	Integer convertToArabic(String romanNumber)
 	{
 		if (romanNumber.length() == 1)
 		{

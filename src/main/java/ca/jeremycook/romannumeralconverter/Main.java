@@ -15,7 +15,7 @@ import static ca.jeremycook.romannumeralconverter.ErrorMessages.NUMBER_ERROR_MES
 import static ca.jeremycook.romannumeralconverter.ErrorMessages.NUMBER_PARSE_ERROR;
 import static ca.jeremycook.romannumeralconverter.ErrorMessages.ROMAN_NUMERAL_ERROR;
 
-public class Main
+public final class Main
 {
 
 	private static final Predicate<String> romanNumeralValidator = Pattern.compile("^M{0,3}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$", Pattern.CASE_INSENSITIVE)
@@ -25,12 +25,14 @@ public class Main
 
 	private static final String EXIT_COMMAND = "exit";
 
-	private static final Collection<Integer> commands = new ArrayList<>();
+	private static final Collection<Integer> COMMANDS = new ArrayList<>();
+
+	private static final RomanNumeralConverter CONVERTER = new RomanNumeralConverter();
 
 	static
 	{
-		commands.add(1);
-		commands.add(2);
+		COMMANDS.add(1);
+		COMMANDS.add(2);
 	}
 
 	public static void main(String[] args) throws IOException
@@ -67,7 +69,7 @@ public class Main
 		{
 			return Stream.of(input)
 					.map(Integer::new)
-					.filter(commands::contains)
+					.filter(COMMANDS::contains)
 					.map(val -> convertValue(val, bufferedReader))
 					.findFirst()
 					.orElse(String.format(INVALID_COMMAND.toString(), input));
@@ -97,7 +99,7 @@ public class Main
 					.limit(1L)
 					.map(Integer::new)
 					.filter(val -> val > 0 && val <= MAX_ROMAN_NUMBER)
-					.map(RomanNumeralConverter::convertToRoman)
+					.map(CONVERTER::convertToRoman)
 					.findFirst()
 					.orElse(String.format(NUMBER_ERROR_MESSAGE.toString(), MAX_ROMAN_NUMBER));
 		}
@@ -115,7 +117,7 @@ public class Main
 				.limit(1L)
 				.filter(romanNumeralValidator)
 				.map(String::toUpperCase)
-				.mapToInt(RomanNumeralConverter::convertToArabic)
+				.mapToInt(CONVERTER::convertToArabic)
 				.mapToObj(Integer::toString)
 				.findFirst()
 				.orElse(ROMAN_NUMERAL_ERROR.toString());
