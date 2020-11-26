@@ -9,15 +9,16 @@ mainClassName = 'ca.jeremycook.romannumeralconverter.Main'
 
 description = "Implementation of the roman numeral kata"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
 
 repositories {
-    maven { url "http://repo.maven.apache.org/maven2" }
+    maven { url "https://repo.maven.apache.org/maven2" }
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
 }
 
 jar {

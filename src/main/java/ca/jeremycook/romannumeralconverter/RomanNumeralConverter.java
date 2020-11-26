@@ -1,10 +1,11 @@
 package ca.jeremycook.romannumeralconverter;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Class to convert to and from Roman Numerals and Arabic numbers.
@@ -16,10 +17,7 @@ final class RomanNumeralConverter
 	 */
 	private final NavigableMap<Integer, String> romanNumeralBoundaries;
 
-	/**
-	 * Function to map a roman numeral character to the arabic number contained in the romanNumeralBoundaries map.
-	 */
-	private final Function<String, Integer> findArabicNumberFromRomanCharacter;
+	private final Map<String, Integer> romanCharacterLookup;
 
 	RomanNumeralConverter()
 	{
@@ -38,12 +36,10 @@ final class RomanNumeralConverter
 		boundaries.put(4, "IV");
 		boundaries.put(1, "I");
 		romanNumeralBoundaries = Collections.unmodifiableNavigableMap(boundaries);
-		findArabicNumberFromRomanCharacter = character -> romanNumeralBoundaries.entrySet()
+
+		romanCharacterLookup = romanNumeralBoundaries.entrySet()
 				.stream()
-				.filter(e -> e.getValue().equals(character))
-				.findFirst()
-				.map(Entry::getKey)
-				.orElseThrow(() -> new IllegalArgumentException(String.format("Unable to map roman numeral '%s' to an arabic character.", character)));
+				.collect(Collectors.toUnmodifiableMap(Entry::getValue, Entry::getKey));
 	}
 
 	/**
@@ -57,9 +53,9 @@ final class RomanNumeralConverter
 	 */
 	String convertToRoman(int arabicNumber)
 	{
-		Entry<Integer, String> entry = romanNumeralBoundaries.floorEntry(arabicNumber);
-		int remainder = arabicNumber - entry.getKey();
-		String currentRomanNumeral = entry.getValue();
+		var entry = romanNumeralBoundaries.floorEntry(arabicNumber);
+		var remainder = arabicNumber - entry.getKey();
+		var currentRomanNumeral = entry.getValue();
 
 		return remainder > 0 ? currentRomanNumeral + convertToRoman(remainder) : currentRomanNumeral;
 	}
@@ -74,12 +70,12 @@ final class RomanNumeralConverter
 	 */
 	Integer convertToArabic(String romanNumber)
 	{
+		var firstCharValue = romanCharacterLookup.get(romanNumber.substring(0, 1));
 		if (romanNumber.length() == 1)
 		{
-			return findArabicNumberFromRomanCharacter.apply(romanNumber);
+			return firstCharValue;
 		}
-		int firstCharValue = findArabicNumberFromRomanCharacter.apply(romanNumber.substring(0, 1));
-		int nextCharValue = findArabicNumberFromRomanCharacter.apply(romanNumber.substring(1, 2));
+		var nextCharValue = romanCharacterLookup.get(romanNumber.substring(1, 2));
 		if (nextCharValue > firstCharValue)
 		{
 			firstCharValue = -firstCharValue;
